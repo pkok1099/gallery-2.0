@@ -15,7 +15,7 @@ android {
         vectorDrawables.generatedDensities = []
         applicationId 'xy.onlasdan.galery'
         minSdkVersion 33
-        compileSdk 33
+        compileSdk 34
         targetSdkVersion 33
         versionCode 100 // last digit is reserved for ABI, only ever end on 0!
         versionName '1.0.0'
