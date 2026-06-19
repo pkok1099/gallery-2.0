@@ -3,7 +3,6 @@ package xy.onlasdan.galery.crypto
 import android.content.Context
 import android.util.SparseArray
 import ca.pkay.rcloneexplorer.RcloneRcd
-import ca.pkay.rcloneexplorer.Services.RcdService
 import ca.pkay.rcloneexplorer.util.FLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -26,9 +25,6 @@ class RcloneCryptProvider(private val context: Context) : RcloneRcd.JobsUpdateHa
         // Handle job updates if needed
     }
 
-    /**
-     * Initialize the rclone RCD daemon. Must be called before any operations.
-     */
     fun initRcd() {
         if (rcd == null) {
             rcd = RcloneRcd(context, this)
@@ -36,22 +32,15 @@ class RcloneCryptProvider(private val context: Context) : RcloneRcd.JobsUpdateHa
         rcd?.startRcd()
     }
 
-    /**
-     * Stop the rclone RCD daemon.
-     */
     fun stopRcd() {
         rcd?.stopRcd()
         rcd = null
     }
 
-    /**
-     * Create the crypt remote configuration in rclone.conf.
-     */
     fun setupCryptRemote(password: String, salt: String) {
         val keys = CryptKeyStore(context)
         keys.save(password, salt)
 
-        // Create the crypt remote via rclone API
         val params = HashMap<String, String>()
         params["type"] = "crypt"
         params["password"] = password
@@ -62,34 +51,22 @@ class RcloneCryptProvider(private val context: Context) : RcloneRcd.JobsUpdateHa
         rcd?.createConfig("galery", "crypt", params)
     }
 
-    /**
-     * Check if rclone is configured and ready.
-     */
     fun isConfigured(): Boolean {
         val keys = CryptKeyStore(context)
         return keys.isConfigured() && rcd?.isAlive == true
     }
 
-    /**
-     * Upload a file to the encrypted remote.
-     * Uses rclone copyFile to copy local file to remote.
-     */
     suspend fun upload(localPath: File, remotePath: String): Boolean = withContext(Dispatchers.IO) {
         try {
             val latch = CountDownLatch(1)
             var success = false
 
             rcd?.copyFile("local", localPath.absolutePath, "galery", remotePath, object : RcloneRcd.JobStatusHandler {
-                override fun onJobStatusUpdate(jobId: Int, status: RcloneRcd.JobStatusResponse) {
-                    // Job completed or errored
-                    if (status.finished) {
-                        success = status.success
+                override fun handleJobStatus(jobStatusResponse: RcloneRcd.JobStatusResponse) {
+                    if (jobStatusResponse.finished) {
+                        success = jobStatusResponse.success
                         latch.countDown()
                     }
-                }
-
-                override fun onJobFinished(jobId: Int) {
-                    latch.countDown()
                 }
             })
 
@@ -101,25 +78,17 @@ class RcloneCryptProvider(private val context: Context) : RcloneRcd.JobsUpdateHa
         }
     }
 
-    /**
-     * Download a file from the encrypted remote.
-     * Uses rclone copyFile to copy remote file to local.
-     */
     suspend fun download(remotePath: String, localPath: File): Boolean = withContext(Dispatchers.IO) {
         try {
             val latch = CountDownLatch(1)
             var success = false
 
             rcd?.copyFile("galery", remotePath, "local", localPath.absolutePath, object : RcloneRcd.JobStatusHandler {
-                override fun onJobStatusUpdate(jobId: Int, status: RcloneRcd.JobStatusResponse) {
-                    if (status.finished) {
-                        success = status.success
+                override fun handleJobStatus(jobStatusResponse: RcloneRcd.JobStatusResponse) {
+                    if (jobStatusResponse.finished) {
+                        success = jobStatusResponse.success
                         latch.countDown()
                     }
-                }
-
-                override fun onJobFinished(jobId: Int) {
-                    latch.countDown()
                 }
             })
 
@@ -131,10 +100,6 @@ class RcloneCryptProvider(private val context: Context) : RcloneRcd.JobsUpdateHa
         }
     }
 
-    /**
-     * List files in a remote directory.
-     * Returns list of file/directory names.
-     */
     suspend fun list(remotePath: String): List<String> = withContext(Dispatchers.IO) {
         try {
             val items = rcd?.list("galery", remotePath)
@@ -145,24 +110,17 @@ class RcloneCryptProvider(private val context: Context) : RcloneRcd.JobsUpdateHa
         }
     }
 
-    /**
-     * Delete a file from the encrypted remote.
-     */
     suspend fun delete(remotePath: String): Boolean = withContext(Dispatchers.IO) {
         try {
             val latch = CountDownLatch(1)
             var success = false
 
             rcd?.deleteFile("galery", remotePath, object : RcloneRcd.JobStatusHandler {
-                override fun onJobStatusUpdate(jobId: Int, status: RcloneRcd.JobStatusResponse) {
-                    if (status.finished) {
-                        success = status.success
+                override fun handleJobStatus(jobStatusResponse: RcloneRcd.JobStatusResponse) {
+                    if (jobStatusResponse.finished) {
+                        success = jobStatusResponse.success
                         latch.countDown()
                     }
-                }
-
-                override fun onJobFinished(jobId: Int) {
-                    latch.countDown()
                 }
             })
 
@@ -174,9 +132,6 @@ class RcloneCryptProvider(private val context: Context) : RcloneRcd.JobsUpdateHa
         }
     }
 
-    /**
-     * Create a directory in the encrypted remote.
-     */
     suspend fun mkdir(remotePath: String): Boolean = withContext(Dispatchers.IO) {
         try {
             rcd?.mkDir("galery", remotePath)
