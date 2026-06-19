@@ -8,23 +8,23 @@
 
 ## Build
 
-Prerequisites: Go 1.24+, JDK 17, Android SDK + NDK `25.2.9519653` (auto-installed by Gradle if `sdkmanager` is available). Version pins in `gradle.properties`.
+**Build via GitHub Actions only.** Local builds not supported for full APK.
 
 ```sh
-./gradlew assembleDebug         # debug (quick iteration)
-./gradlew assembleRelease       # release (minified, signed)
+gh workflow run android.yml --ref main    # trigger build
+gh run list --workflow=android.yml        # check status
+gh run download <run-id>                  # download APKs
 ```
 
-**Rclone is compiled from source by Gradle.** The `:rclone:buildAll` task runs automatically before `:app:preBuild` and cross-compiles rclone (including crypt support) for all 4 ABIs. First build downloads rclone into `rclone/cache/` — expect 5-15 min.
+**Rclone is compiled from source by Gradle.** CI builds rclone for all 4 ABIs (arm, arm64, x86, x64) + universal. First build takes 5-15 min.
 
-**To skip rclone build** (when only changing Android code, after first full build):
+**Local code validation** (no full APK):
 
 ```sh
-./gradlew lint -x :rclone:buildAll                  # lint only
-./gradlew assembleDebug -x :rclone:buildAll          # skip if app/lib/ .so files exist
+./gradlew lint -x :rclone:buildAll         # lint check
+./gradlew test                              # unit tests
+./gradlew compileDebugSources -x :rclone:buildAll  # check compilation
 ```
-
-**NEVER run a build without explicit user permission.**
 
 ## Modules
 

@@ -2,9 +2,9 @@ name: Android Lint
 
 on:
   push:
+    branches: [main]
   pull_request:
-    branches-ignore:
-      - 'master'
+    branches: [main]
 
 jobs:
   checkLint:
