@@ -6,6 +6,12 @@
 
 **app ID:** `xy.onlasdan.galery` | **Package:** `xy.onlasdan.galery`
 
+## Implementation Status
+
+- **Phase 1:** Strip legacy, rebrand, new skeleton ✓
+- **Phase 2:** Core functionality (crypto, upload, gallery UI) ✓
+- **Phase 3:** Polish (network constraints, retry, error handling) — TODO
+
 ## Build
 
 **Build via GitHub Actions only.** Local builds not supported for full APK.
