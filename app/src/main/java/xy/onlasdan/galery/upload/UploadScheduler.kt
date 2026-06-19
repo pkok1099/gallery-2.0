@@ -19,6 +19,7 @@ object UploadScheduler {
      * @param context Application context
      * @param wifiOnly If true, only upload on Wi-Fi. If false, upload on any network.
      */
+    @JvmOverloads
     fun schedule(context: Context, wifiOnly: Boolean = true) {
         val networkType = if (wifiOnly) NetworkType.UNMETERED else NetworkType.CONNECTED
 
