@@ -46,6 +46,9 @@ class PhotoGridActivity : AppCompatActivity() {
         setupRecyclerView()
         setupCameraButton()
         loadPhotos()
+
+        // Start upload scheduler
+        UploadScheduler.schedule(this)
     }
 
     override fun onResume() {
@@ -61,7 +64,10 @@ class PhotoGridActivity : AppCompatActivity() {
 
     private fun setupRecyclerView() {
         adapter = PhotoAdapter { photo ->
-            // TODO: Open photo detail
+            // Navigate to photo detail
+            val intent = Intent(this, PhotoDetailActivity::class.java)
+            intent.putExtra(PhotoDetailActivity.EXTRA_PHOTO_PATH, photo.remotePath)
+            startActivity(intent)
         }
         recyclerView.layoutManager = GridLayoutManager(this, 3)
         recyclerView.adapter = adapter

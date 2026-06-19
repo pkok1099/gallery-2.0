@@ -36,12 +36,27 @@ class UploadWorker(
                 Thread.sleep(2000)
 
                 val pending = db.photoDao().pending()
-                for (photo in pending) {
+                if (pending.isEmpty()) {
+                    provider.stopRcd()
+                    return@withContext Result.success()
+                }
+
+                // Show progress notification
+                UploadNotification.showProgress(applicationContext, 0, pending.size)
+
+                var successCount = 0
+                var failCount = 0
+
+                for ((index, photo) in pending.withIndex()) {
                     val src = File(photo.localPath)
                     if (!src.exists()) {
                         db.photoDao().markFailed(photo.id)
+                        failCount++
                         continue
                     }
+
+                    // Update progress notification
+                    UploadNotification.showProgress(applicationContext, index + 1, pending.size)
 
                     // Create thumbnail and write to temp file
                     val thumbBytes = ThumbnailEncryptor.downscaleFromBytes(src.readBytes())
@@ -57,21 +72,30 @@ class UploadWorker(
 
                     if (uploadOk && thumbOk) {
                         db.photoDao().markUploaded(photo.id)
+                        successCount++
                     } else {
                         db.photoDao().markFailed(photo.id)
+                        failCount++
                     }
                 }
 
                 // Stop rclone when done
                 provider.stopRcd()
 
+                // Show completion notification
+                if (successCount > 0) {
+                    UploadNotification.showComplete(applicationContext, successCount)
+                }
+                if (failCount > 0) {
+                    UploadNotification.showError(applicationContext, "$failCount photos failed to upload")
+                }
+
                 Result.success()
             } catch (e: Exception) {
                 FLog.e(TAG, "Upload failed: ${e.message}")
+                UploadNotification.showError(applicationContext, e.message ?: "Unknown error")
                 Result.failure()
             }
         }
-        }
-        return Result.success()
     }
 }

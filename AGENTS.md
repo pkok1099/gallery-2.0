@@ -10,7 +10,7 @@
 
 - **Phase 1:** Strip legacy, rebrand, new skeleton ✓
 - **Phase 2:** Core functionality (crypto, upload, gallery UI) ✓
-- **Phase 3:** Polish (network constraints, retry, error handling) — TODO
+- **Phase 3:** Polish (network constraints, retry, error handling) ✓
 
 ## Build
 
@@ -45,27 +45,26 @@ gh run download <run-id>                  # download APKs
 ```
 app/src/main/java/
 ├── xy/onlasdan/galery/          ← NEW: gallery app code
-│   ├── ui/gallery/              PhotoGridActivity, PhotoDetailActivity
+│   ├── ui/gallery/              PhotoGridActivity, PhotoDetailActivity, PhotoAdapter
 │   ├── ui/setup/                OnboardingActivity, BackendPickerActivity
 │   ├── ui/settings/             SettingsActivity
 │   ├── ui/about/                AboutActivity
 │   ├── crypto/                  CryptKeyStore, RcloneCryptProvider, BackendConfig
 │   ├── thumbnails/              ThumbnailEncryptor, ThumbnailCache, ThumbnailLoader (Glide)
-│   ├── upload/                  UploadWorker, UploadScheduler, MediaStoreObserver
+│   ├── upload/                  UploadWorker, UploadScheduler, MediaStoreObserver, UploadNotification
 │   ├── camera/                  CameraIntentHandler
 │   └── data/                    Room DB (GalleryDatabase, PhotoDao), model/Photo, repo/GalleryRepository
 │
 └── ca/pkay/rcloneexplorer/      ← LEGACY: kept for rclone wrappers + WorkManager infra
-    ├── Rclone.java, RcloneRcd.java    rclone CLI/API interface
+    ├── RcloneRcd.java    rclone CLI/API interface
     ├── Services/RcdService.java       rclone daemon lifecycle
-    ├── Services/SyncService.kt        WorkManager default service (required, do not remove)
-    ├── BroadcastReceivers/            BootReciever, SyncRestartAction, ClearReport
+    ├── BroadcastReceivers/            BootReciever
     └── util/                          FLog, NotificationUtils, WifiConnectivityUtil, etc.
 ```
 
 **Key files that are NOT gallery code but must not be deleted:**
 - `ca.pkay.rcloneexplorer.RcloneRcd` — all rclone operations go through this
-- `ca.pkay.rcloneexplorer.Services.SyncService` — manifest-declared, required by WorkManager
+- `ca.pkay.rcloneexplorer.Services.RcdService` — manifest-declared, required by rclone daemon
 - `ca.pkay.rcloneexplorer.BroadcastReceivers.BootReciever` — schedules uploads on boot
 
 ## Crypt Flow
@@ -74,6 +73,16 @@ app/src/main/java/
 2. `MediaStoreObserver` watches for new photos → `UploadWorker` enqueues them
 3. Worker reads source → generates encrypted thumbnail (512px JPEG) → uploads both via `RcloneCryptProvider` (rclone crypt remote)
 4. Grid displays thumbnails: `ThumbnailLoader` (Glide ModelLoader) fetches `.enc` thumbnail → decrypts in-memory → returns Bitmap
+
+## Features
+
+- **Encrypted uploads**: All photos encrypted client-side via rclone crypt before upload
+- **Thumbnail encryption**: Thumbnails encrypted separately for fast preview
+- **Wi-Fi only mode**: Configurable network constraints
+- **Background upload**: WorkManager-based with retry policy
+- **Camera integration**: Direct capture with system camera
+- **MediaStore sync**: Automatic detection of new photos
+- **Notifications**: Upload progress, completion, and error notifications
 
 ## Running Tests
 

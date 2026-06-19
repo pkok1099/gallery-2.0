@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="Upload Settings">
+
+        <SwitchPreferenceCompat
+            app:key="wifi_only"
+            app:title="Upload on Wi-Fi only"
+            app:summary="Only upload photos when connected to Wi-Fi"
+            app:defaultValue="true" />
+
+        <SwitchPreferenceCompat
+            app:key="upload_notifications"
+            app:title="Show upload notifications"
+            app:summary="Display notifications during upload"
+            app:defaultValue="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Encryption">
+
+        <Preference
+            app:key="change_password"
+            app:title="Change encryption password"
+            app:summary="Update your encryption password and salt" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="About">
+
+        <Preference
+            app:key="version"
+            app:title="Version"
+            app:summary="1.0.0" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
