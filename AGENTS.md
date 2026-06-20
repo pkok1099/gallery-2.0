@@ -36,7 +36,7 @@ gh run download <run-id>                  # download APKs
 
 | Module | Purpose |
 |--------|---------|
-| `app` | Main Android app (`xy.onlasdan.galery`) — gallery UI, crypto, upload, camera |
+| `app` | Main Android app (`xy.onlasdan.galery`, ARM64 only) — gallery UI, crypto, upload, camera |
 | `rclone` | Go build script → cross-compiles rclone as `librclone.so` into `app/lib/` |
 | `safdav` | SAF-over-WebDAV library (`io.github.x0b.safdav`) — used by upload pipeline |
 
