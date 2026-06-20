@@ -26,18 +26,22 @@
         android:theme="@style/AppTheme"
         tools:targetApi="33">
 
-        <activity android:name=".ui.setup.OnboardingActivity" />
         <activity
-            android:name=".ui.gallery.PhotoGridActivity"
+            android:name=".ui.setup.OnboardingActivity"
             android:exported="true"
             android:label="@string/app_short_name"
-            android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.gallery.PhotoGridActivity"
+            android:exported="false"
+            android:label="@string/app_short_name"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.gallery.PhotoDetailActivity"
             android:theme="@style/AppTheme.NoActionBar"

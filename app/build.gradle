@@ -155,8 +155,7 @@ dependencies {
     implementation 'org.nanohttpd:nanohttpd:2.3.1'
     // Encrypted storage for crypt key + salt
     implementation 'androidx.security:security-crypto:1.1.0-alpha06'
-    // SQLCipher-backed Room database for photo metadata
-    implementation 'net.zetetic:android-database-sqlcipher:4.5.4'
+    // SQLite (plain, no SQLCipher to avoid Room conflict)
     implementation 'androidx.sqlite:sqlite-ktx:2.4.0'
     // Room
     implementation 'androidx.room:room-runtime:2.6.1'
