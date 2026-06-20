@@ -1032,13 +1032,6 @@ public class RcloneRcd {
 
         @JsonProperty("IsDir")
         boolean isDir;
-
-        public String getPath() { return path; }
-        public String getName() { return name; }
-        public String getMimeType() { return mimeType; }
-        public long getSize() { return size; }
-        public long getLastModified() { return lastModified; }
-        public boolean isDir() { return isDir; }
     }
 
     private static class FsInfoRcOpResponse implements RcOpResponse {

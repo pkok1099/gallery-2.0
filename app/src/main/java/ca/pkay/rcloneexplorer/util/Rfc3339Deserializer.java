@@ -1,29 +1,34 @@
 package ca.pkay.rcloneexplorer.util;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
-/**
- * Jackson deserializer that parses RFC 3339 timestamps from rclone API responses.
- */
-public class Rfc3339Deserializer extends JsonDeserializer<Date> {
+import ca.pkay.rcloneexplorer.RcloneRcd;
+import io.github.x0b.rfc3339parser.Rfc3339Parser;
+import io.github.x0b.rfc3339parser.Rfc3339Strict;
+
+public class Rfc3339Deserializer extends StdDeserializer<Long> {
+
+    private Rfc3339Parser rfc3339Parser;
+
+    protected Rfc3339Deserializer() {
+        super(Rfc3339Deserializer.class);
+        rfc3339Parser = new Rfc3339Strict();
+    }
+
     @Override
-    public Date deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+    public Long deserialize(JsonParser parser, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+        JsonNode timeNode = parser.getCodec().readTree(parser);
         try {
-            String dateStr = p.getValueAsString();
-            // Handle both with and without timezone
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
-            format.setTimeZone(TimeZone.getTimeZone("UTC"));
-            return format.parse(dateStr);
+            return rfc3339Parser.parseCalendar(timeNode.asText()).getTimeInMillis();
         } catch (ParseException e) {
-            return null;
+            return 0L;
         }
     }
 }

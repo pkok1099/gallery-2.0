@@ -82,6 +82,4 @@
     <color name="dividerColor">@color/md_theme_light_secondaryContainer</color>
     <color name="fabOverlayColor">@color/md_theme_light_secondary</color>
 
-    <!-- Gallery colors -->
-    <color name="photo_placeholder_bg">#E0E0E0</color>
 </resources>

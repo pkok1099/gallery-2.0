@@ -1,50 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical"
-    android:padding="32dp">
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                     xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                     xmlns:tools="http://schemas.android.com/tools"
+                                                     android:layout_width="match_parent"
+                                                     android:layout_height="match_parent"
+                                                     tools:context=".Activities.AboutActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/app_name"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp" />
+        android:paddingStart="6dp"
+        android:paddingEnd="6dp"
+        app:elevation="0dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/app_description"
-        android:textSize="14sp"
-        android:alpha="0.7"
-        android:layout_marginBottom="24dp" />
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            app:cardCornerRadius="@dimen/cardCornerRadius"
+            style="@style/MainViewToolbar"
+            app:cardElevation="2dp"
+            app:strokeWidth="0dp">
 
-    <TextView
-        android:id="@+id/text_version"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Version 1.0.0"
-        android:textSize="12sp"
-        android:alpha="0.5"
-        android:layout_marginBottom="16dp" />
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:theme="@style/MainViewToolbar"
+                android:orientation="horizontal" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Encrypted cloud gallery powered by rclone"
-        android:textSize="12sp"
-        android:alpha="0.5"
-        android:layout_marginBottom="8dp" />
+        </com.google.android.material.card.MaterialCardView>
+    </com.google.android.material.appbar.AppBarLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="GitHub: https://github.com/pkok1099/gallery-2.0"
-        android:textSize="12sp"
-        android:alpha="0.5" />
+    <include layout="@layout/content_about" />
 
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,123 +1,105 @@
-# Contributing to Galery
+# Contributing to Round Sync
 
-Thank you for your interest in contributing to Galery! This document provides guidelines and information for contributors.
+We welcome any contribution to Round Sync, and there are multiple ways to contribute:
 
-## How to Contribute
+ - [Reporting a bug](#reporting-a-bug)
+ - [Localize Round Sync into your language](#localize-round-sync)
+ - [Developing](#developing)
+ - [Submitting a pull request](#submitting-a-pr)
+ - [Requesting a new features](#requesting-a-new-feature)
 
-### Reporting Bugs
 
-1. Check if the bug has already been reported in [GitHub Issues](https://github.com/pkok1099/gallery-2.0/issues)
-2. If not, create a new issue with:
-   - Clear description of the bug
-   - Steps to reproduce
-   - Expected behavior
-   - Actual behavior
-   - Device information (Android version, device model)
+## Reporting a bug
+No one likes it if something goes wrong. However, before submitting a bug report, please make sure to check the following links:
 
-### Suggesting Features
+- [Round Sync documentation](https://roundsync.com/)
+- [search existing issues](https://github.com/newhinton/Round-Sync/issues?q=is%3Aissue)
+- [rclone documentation](https://rclone.org/)
+- [rclone forum](https://forum.rclone.org/)
 
-1. Check existing feature requests in [GitHub Issues](https://github.com/pkok1099/gallery-2.0/issues)
-2. Create a new issue with:
-   - Clear description of the feature
-   - Use case and benefits
-   - Any implementation ideas
+A lot of problems are errors in `rclone.conf`. If you have [Termux](https://github.com/termux/termux-app) installed, you can install rclone  with `pkg install rclone`. Then, export your config from Round Sync and select Termux as target. You can then try to check if the error also occurs in Termux. You can also export and transfer your config to a desktop PC and test it there. 
 
-### Submitting Changes
+If you experience the same issue on your PC or in Termux, you can use the rclone forum to post your problem. If you are really sure that you have discovered an issue in rclone itself, you can also open an issue in the rclone repository.
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/your-feature-name`
-3. Make your changes
-4. Test thoroughly
-5. Commit with clear messages: `git commit -m "Add: description of changes"`
-6. Push to your fork: `git push origin feature/your-feature-name`
-7. Create a Pull Request
+When filing a new bug report, answer all the questions in the template. This includes:
+ - App version (e.g. `v1.11.4`)
+ - Exact Android version (e.g. `8.1.0`)
+ - Your device model and manufacturer
+ - An exact list of steps that leads to your issue. Please also enable local logging in Settings > Logging > Log rclone errors.
+ - Paste or attach your rclone log located in `Android/data/de.felixnuesse.extract/files/logs/log.txt`. Make sure to remove any confidential information such as passwords, tokens or authorization info.
+ - If your issue happens when using a remote, please also add a redacted version of your configuration file (passwords and tokens removed).
+ - We may also ask you to test your config file on a PC or in Termux.
 
-## Development Setup
 
-### Prerequisites
+## Localize Round Sync
+ - Download [strings.xml](https://github.com/newhinton/Round-Sync/blob/master/app/src/main/res/values/strings.xml) file.
+ - Open the `string.xml` file with your favorite text editor.
+ - Delete all the `strings` with the attribute **translatable="false"**.
+ - Translate `string` values from **en-US (English)** to that language you want to localize Round Sync.
+   Here is an example of translating into **bn-BD**
 
-- Android Studio (latest stable)
-- JDK 17
-- Go 1.24+ (for rclone build)
-- Android SDK with API 33
+   Default string values **en-US**
+   ```sh
+   <string name="app_name">Round Sync</string>
+   <string name="app_description">Rclone for Android</string>
+   <string name="app_short_name">Round Sync</string>
+   ```
+   Translated string values into **bn-BD**
+   ```sh
+   <string name="app_name">রাউন্ড সিঙ্ক</string>
+   <string name="app_description">অ্যান্ড্রয়েডের জন্য আরক্লোন</string>
+   <string name="app_short_name">রাউন্ড সিঙ্ক</string>
+   ```
 
-### Building
 
-**Note:** Full APK builds are done via GitHub Actions only.
+## Developing
+You should first make sure you have:
 
-For local development:
+- Go 1.20+ installed and in your PATH
+- Java installed and in your PATH
+- Android SDK command-line tools installed OR the NDK version specified in `gradle.properties`
+  installed
 
-```sh
-# Lint check
-./gradlew lint -x :rclone:buildAll
-
-# Unit tests
-./gradlew test
-
-# Check compilation
-./gradlew compileDebugSources -x :rclone:buildAll
-```
-
-### Code Style
-
-- Follow Kotlin coding conventions for new code
-- Use meaningful variable and function names
-- Add comments for complex logic
-- Keep functions focused and concise
-
-## Architecture
-
-### Package Structure
-
-```
-app/src/main/java/
-├── xy/onlasdan/galery/          # New gallery code
-│   ├── ui/                      # Activities and UI components
-│   ├── crypto/                  # Encryption and rclone integration
-│   ├── thumbnails/              # Thumbnail pipeline
-│   ├── upload/                  # Upload workers and scheduler
-│   ├── camera/                  # Camera integration
-│   └── data/                    # Database and models
-│
-└── ca/pkay/rcloneexplorer/      # Legacy rclone infrastructure
-```
-
-### Key Components
-
-- **RcloneCryptProvider**: Handles all rclone operations
-- **UploadWorker**: Background upload with WorkManager
-- **ThumbnailLoader**: Glide ModelLoader for encrypted thumbnails
-- **GalleryDatabase**: Room database with SQLCipher encryption
-
-## Testing
-
-### Unit Tests
+You can then build the app normally from Android Studio or from CLI by running:
 
 ```sh
-./gradlew test
+# Debug build
+./gradlew assembleOssDebug
+
+# or release build
+./gradlew assembleOssRelease
 ```
 
-### Lint
 
-```sh
-./gradlew lint -x :rclone:buildAll
-```
+## Submitting a PR
+Here are a few tips on getting your PR merged:
 
-## Pull Request Guidelines
+1. Keep your PR small. Small PRs are easier to review, easier to test and as a result can be merged quickly. If this is your first PR to Round Sync, keep it very small.
+2. Keep your PR focussed. Your PR should have a single, specific purpose. If you discover something else you'd like to improve while working on your PR, only include it if there's a direct link to the purpose of the PR.
+3. Use the style of the existing code base. Use idiomatic code whenever possible. If you have performance concerns, use the profiler to test your assumptions.
+4. Rebase your branch before creating your PR.
 
-1. **Keep it focused**: One feature or fix per PR
-2. **Test thoroughly**: Ensure all tests pass
-3. **Update documentation**: If adding features, update README
-4. **Follow code style**: Use consistent formatting
-5. **Write clear commits**: Describe what and why
 
-## Code of Conduct
+## Requesting a new feature
+We also discuss new features on GitHub. You can browse the issue for existing feature requests and join the discussion. Note that commenting generally notifies all participants of your comment. Please avoid '+1', 'me to' or similar comments and use :+1: [reactions](https://github.blog/2016-03-10-add-reactions-to-pull-requests-issues-and-comments/) instead.
 
-- Be respectful and inclusive
-- Focus on constructive feedback
-- Help others learn and grow
-- Maintain a positive environment
+When opening a new feature request, **answer all questions in the template**. This includes:
+- Searching for existing issues and discussions that already cover your request. We may close your request without comment if you fail to do this.
+- For anything related to data transfer or accessing files on your cloud storage, please first check if your idea works in rclone. If it does not work there, it will probably also not work in Round Sync.
+- Asking yourself what you can do to create this feature.
+- The version of Round Sync you are using.
 
-## Questions?
+You will also be asked two free-form questions:
+> #### What problem are you trying to solve?
 
-If you have questions about contributing, feel free to open an issue or reach out to the maintainers.
+Describe what you are trying to achieve. This may include a series of steps if you are using rclone as part of a larger workflow, or may just be a single action. **Do not describe possible solutions.** Keep your ideas for the next question. 
+
+You can describe this as a problem ("I cannot find a file"), or as a goal you want to achieve ("I would like to stream a video on my TV").
+
+> #### What should Round Sync be able to do differently to help with this problem?
+
+Describe how you would solve your problem. This may include additional buttons, options, menus, dialogs, etc. 
+
+This two-step approach allows us to to design general solutions, that work not just for your specific situation, but for the broader Round Sync user base. It also makes it easier for other community to join the discussion and suggest different solutions.
+
+Please keep in mind that Round Sync and rclone are developed by volunteers.
