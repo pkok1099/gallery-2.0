@@ -200,24 +200,12 @@ task checkoutRclone(type: Exec, dependsOn: createRcloneModule) {
     commandLine 'go', 'get', '-v', '-d', "${RCLONE_MODULE}@v${RCLONE_VERSION}"
 }
 
-task buildArm(dependsOn: checkoutRclone) {
-    configure buildRclone('armeabi-v7a')
-}
-
 task buildArm64(dependsOn: checkoutRclone) {
     configure buildRclone('arm64-v8a')
 }
 
-task buildx86(dependsOn: checkoutRclone) {
-    configure buildRclone('x86')
-}
-
-task buildx64(dependsOn: checkoutRclone) {
-    configure buildRclone('x86_64')
-}
-
 task buildAll {
-    dependsOn buildArm, buildArm64, buildx86, buildx64
+    dependsOn buildArm64
 }
 
 task clean {
